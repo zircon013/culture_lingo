@@ -149,10 +149,45 @@
     </div>
 
     <script>
+        // 1. Initialiseer de browser-geluidsstudio
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // 2. De synthesizer functie
+        function playSound(type) {
+            // Browsers blokkeren soms geluid tot je klikt. Dit maakt de studio 'wakker'.
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                oscillator.type = 'sine'; // Hoge 'Ding'
+                oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); 
+                oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1); 
+                gainNode.gain.setValueAtTime(1, audioCtx.currentTime); 
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3); 
+            } else if (type === 'wrong') {
+                oscillator.type = 'sawtooth'; // Lage 'Bzzzt'
+                oscillator.frequency.setValueAtTime(150, audioCtx.currentTime); 
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime); 
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3); 
+            }
+
+            // Start het geluid en stop het na 0.3 seconden
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.3);
+        }
+
         let cultures = [];
         let currentCulture = null;
         let currentQuestionIndex = 0;
         let score = 0;
+
 
         async function loadCultureData() {
             try {
@@ -224,11 +259,16 @@
         function checkAnswer(selectedIndex, button) {
             const q = currentCulture.quiz[currentQuestionIndex];
             const buttons = document.querySelectorAll('.choice-btn');
+            
+            // Blokkeer alle knoppen
             buttons.forEach(btn => btn.disabled = true);
             const feedback = document.getElementById('quiz-feedback');
             feedback.style.display = 'block';
 
             if(selectedIndex === q.answer) {
+                // Synthesizer geluid afspelen: CORRECT
+                playSound('correct');
+
                 button.style.background = 'rgba(34, 197, 94, 0.2)';
                 button.style.borderColor = '#22c55e';
                 feedback.innerText = '✅ Correct! +50 XP';
@@ -237,6 +277,9 @@
                 score++;
                 document.getElementById('current-score').innerText = score * 50;
             } else {
+                // Synthesizer geluid afspelen: FOUT
+                playSound('wrong');
+
                 button.style.background = 'rgba(239, 68, 68, 0.2)';
                 button.style.borderColor = '#ef4444';
                 buttons[q.answer].style.background = 'rgba(34, 197, 94, 0.2)';
@@ -245,6 +288,7 @@
                 feedback.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
                 feedback.style.color = '#f87171';
             }
+
             document.getElementById('next-btn').style.display = 'block';
         }
 
