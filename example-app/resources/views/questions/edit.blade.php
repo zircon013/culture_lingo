@@ -6,7 +6,6 @@
     </x-slot>
 
     <style>
-        /* Modern Glassmorphism UI voor het Beheerderspaneel */
         .admin-wrapper {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             min-height: calc(100vh - 65px);
@@ -154,7 +153,6 @@
                 &larr; Terug naar Cultuur Overzicht
             </a>
             
-            <!-- VRAAG BEWERKEN -->
             <div class="glass-panel">
                 <h3 style="font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 16px; color: #a5b4fc;">
                     ✏️ Vraag Bewerken
@@ -166,7 +164,6 @@
                 </form>
             </div>
 
-            <!-- ANTWOORDEN BEHEREN -->
             <div class="glass-panel">
                 <h3 style="font-size: 1.6rem; font-weight: bold; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px;">
                     🎯 Antwoorden
@@ -197,7 +194,6 @@
                     @endforeach
                 </div>
 
-                <!-- NIEUW ANTWOORD TOEVOEGEN -->
                 <form action="{{ route('answers.store', $question->id) }}" method="POST" class="add-answer-card">
                     @csrf
                     <div style="flex: 1;">

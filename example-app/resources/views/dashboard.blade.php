@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
     
     <style>
-        /* Dark Mode & Glassmorphism voor de Game Area */
         .game-wrapper {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border-radius: 16px;
@@ -18,7 +17,6 @@
             margin-bottom: 30px;
         }
 
-        /* De XP en Streak Banner */
         .stats-banner {
             display: flex;
             justify-content: space-around;
@@ -46,7 +44,6 @@
             color: #94a3b8;
         }
 
-        /* De Grid Blokken */
         .cultures-grid {
             display: grid;
             grid-template-cols: repeat(auto-fill, minmax(220px, 1fr));
@@ -149,12 +146,9 @@
     </div>
 
     <script>
-        // 1. Initialiseer de browser-geluidsstudio
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        // 2. De synthesizer functie
         function playSound(type) {
-            // Browsers blokkeren soms geluid tot je klikt. Dit maakt de studio 'wakker'.
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
@@ -166,19 +160,18 @@
             gainNode.connect(audioCtx.destination);
 
             if (type === 'correct') {
-                oscillator.type = 'sine'; // Hoge 'Ding'
+                oscillator.type = 'sine'; 
                 oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); 
                 oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1); 
                 gainNode.gain.setValueAtTime(1, audioCtx.currentTime); 
                 gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3); 
             } else if (type === 'wrong') {
-                oscillator.type = 'sawtooth'; // Lage 'Bzzzt'
+                oscillator.type = 'sawtooth';
                 oscillator.frequency.setValueAtTime(150, audioCtx.currentTime); 
                 gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime); 
                 gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3); 
             }
 
-            // Start het geluid en stop het na 0.3 seconden
             oscillator.start(audioCtx.currentTime);
             oscillator.stop(audioCtx.currentTime + 0.3);
         }
@@ -230,7 +223,7 @@
             document.getElementById('quiz-section').style.display = 'block';
             currentQuestionIndex = 0;
             score = 0;
-            document.getElementById('current-score').innerText = score * 50; // Laat 50 XP per vraag zien
+            document.getElementById('current-score').innerText = score * 50; 
             showQuestion();
         }
 
@@ -260,13 +253,11 @@
             const q = currentCulture.quiz[currentQuestionIndex];
             const buttons = document.querySelectorAll('.choice-btn');
             
-            // Blokkeer alle knoppen
             buttons.forEach(btn => btn.disabled = true);
             const feedback = document.getElementById('quiz-feedback');
             feedback.style.display = 'block';
 
             if(selectedIndex === q.answer) {
-                // Synthesizer geluid afspelen: CORRECT
                 playSound('correct');
 
                 button.style.background = 'rgba(34, 197, 94, 0.2)';
@@ -277,7 +268,6 @@
                 score++;
                 document.getElementById('current-score').innerText = score * 50;
             } else {
-                // Synthesizer geluid afspelen: FOUT
                 playSound('wrong');
 
                 button.style.background = 'rgba(239, 68, 68, 0.2)';
@@ -309,20 +299,19 @@
             const xpEarned = score * 50;
             document.getElementById('xp-gained-text').innerText = `+${xpEarned} XP verdiend!`;
 
-            // Stuur de data naar de backend!
             try {
                 const response = await fetch("{{ url('/api/update-stats') }}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}' // Laravel beveiliging
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({ xp: xpEarned })
                 });
                 
                 const result = await response.json();
                 if(result.success) {
-                    // Update de banner live!
+                 
                     document.getElementById('ui-xp').innerText = result.xp;
                     document.getElementById('ui-streak').innerText = '🔥 ' + result.streak;
                 }

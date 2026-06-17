@@ -11,14 +11,12 @@ Route::get('/api/cultures', [App\Http\Controllers\CultureController::class, 'api
 Route::middleware('auth')->group(function () {
     Route::get('/api/cultures', [App\Http\Controllers\CultureController::class, 'apiIndex']);
     
-    // Vragen Routes
     Route::post('/cultures/{culture}/questions', [QuestionController::class, 'store'])->name('questions.store');
     Route::get('/questions/{question}/edit', [QuestionController::class, 'edit'])->name('questions.edit');
     Route::put('/questions/{question}', [QuestionController::class, 'update'])->name('questions.update');
     Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
     Route::post('/api/update-stats', [App\Http\Controllers\CultureController::class, 'updateStats']);
 
-    // Antwoorden Routes
     Route::post('/questions/{question}/answers', [AnswerController::class, 'store'])->name('answers.store');
     Route::put('/answers/{answer}', [AnswerController::class, 'update'])->name('answers.update');
     Route::delete('/answers/{answer}', [AnswerController::class, 'destroy'])->name('answers.destroy');

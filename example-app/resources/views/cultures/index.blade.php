@@ -6,7 +6,6 @@
     </x-slot>
 
     <style>
-        /* Exact dezelfde Glassmorphism UI voor het hoofdmenu */
         .admin-wrapper {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             min-height: calc(100vh - 65px);
@@ -58,7 +57,6 @@
             transform: translateY(-2px);
         }
         
-        /* Tabel Styling */
         .glass-table {
             width: 100%;
             border-collapse: collapse;
@@ -87,7 +85,6 @@
             background: rgba(255, 255, 255, 0.04);
         }
         
-        /* Actie Knoppen (Tekst) */
         .btn-text {
             background: none;
             border: none;
